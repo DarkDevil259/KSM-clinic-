@@ -6,16 +6,16 @@ import { Button } from "../components/Button";
 import { TextField } from "../components/TextField";
 import { TextAreaField } from "../components/TextAreaField";
 import { apiPost } from "../lib/api";
-import { Calendar, MessageCircle, ShieldCheck } from "lucide-react";
+import { Calendar, ShieldCheck } from "lucide-react";
 import { Reveal } from "../components/Reveal";
 
 const schema = z.object({
   fullName: z.string().min(2, "Please enter your full name."),
   phone: z.string().min(7, "Please enter a valid phone number."),
-  email: z.string().email("Please enter a valid email.").optional().or(z.literal("")),
+  email: z.string().email("Please enter a valid email."),
   service: z.string().min(2, "Please select a service."),
   preferredDate: z.string().min(4, "Please choose a date."),
-  preferredTime: z.string().min(1, "Please choose a time."),
+  preferredTime: z.string().optional().or(z.literal("")),
   message: z.string().max(800, "Message is too long.").optional().or(z.literal("")),
 });
 
@@ -33,7 +33,9 @@ const services = [
 
 export function Appointment() {
   const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState<null | { whatsappUrl?: string }>(null);
+  const [success, setSuccess] = useState<null | { 
+    emailSent?: boolean;
+  }>(null);
   const [error, setError] = useState<string | null>(null);
 
   const {
@@ -65,11 +67,15 @@ export function Appointment() {
     setError(null);
     setSuccess(null);
     try {
-      const res = await apiPost<{ whatsappUrl?: string }>(
+      const res = await apiPost<{ 
+        emailSent?: boolean;
+      }>(
         "/api/appointment",
         values
       );
-      setSuccess({ whatsappUrl: res.whatsappUrl });
+      setSuccess({ 
+        emailSent: res.emailSent,
+      });
       reset({ service: values.service });
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to submit.");
@@ -95,8 +101,7 @@ export function Appointment() {
           </Reveal>
           <Reveal delay={0.3}>
             <p className="mt-3 max-w-xl text-base text-slate-600">
-              Fill the form and submit. We’ll email the clinic owner right away and (optionally) give you a WhatsApp link
-              to send the same details instantly.
+              Fill the form and submit. We'll email the clinic owner right away with your booking details. You'll also receive a confirmation email if you provide your email address.
             </p>
           </Reveal>
 
@@ -141,7 +146,7 @@ export function Appointment() {
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <TextField
-                  label="Email (optional)"
+                  label="Email"
                   placeholder="you@email.com"
                   error={errors.email?.message}
                   autoComplete="email"
@@ -176,7 +181,7 @@ export function Appointment() {
                   {...register("preferredDate")}
                 />
                 <TextField
-                  label="Preferred Time"
+                  label="Preferred Time (optional)"
                   type="time"
                   error={errors.preferredTime?.message}
                   {...register("preferredTime")}
@@ -199,23 +204,18 @@ export function Appointment() {
               {success ? (
                 <div className="rounded-2xl border border-dental-200 bg-dental-50 p-4">
                   <div className="text-sm font-extrabold text-navy-900">
-                    Submitted! We’ll confirm your slot shortly.
+                    ✅ Appointment Submitted Successfully!
                   </div>
-                  <div className="mt-1 text-sm text-slate-700">
-                    Want instant follow-up? Tap WhatsApp to send the same details.
+                  <div className="mt-2 space-y-1 text-sm text-slate-700">
+                    <p>✓ Your booking details have been sent to the clinic.</p>
+                    {success.emailSent ? (
+                      <p>✓ Confirmation email sent to your email address.</p>
+                    ) : (
+                      <p className="text-slate-500">ℹ Confirmation email is being sent.</p>
+                    )}
+                    <p>We'll contact you shortly to confirm your appointment.</p>
                   </div>
-                  <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-                    {success.whatsappUrl ? (
-                      <Button
-                        href={success.whatsappUrl}
-                        target="_blank"
-                        variant="secondary"
-                        className="w-full sm:w-auto"
-                      >
-                        <MessageCircle className="h-4 w-4" />
-                        Send via WhatsApp
-                      </Button>
-                    ) : null}
+                  <div className="mt-4">
                     <Button to="/" variant="ghost" className="w-full sm:w-auto">
                       Back to Home
                     </Button>

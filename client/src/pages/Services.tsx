@@ -1,47 +1,78 @@
 import { ArrowUpRight, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Reveal } from "../components/Reveal";
+import { IMAGES } from "../constants/images";
 
 const services = [
   {
     title: "Teeth Cleaning",
     slug: "teeth-cleaning",
-    image: "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=400&q=80",
+    image: IMAGES.services.teethCleaning,
+  },
+  {
+    title: "Clear Aligners",
+    slug: "clear-aligners",
+    image: IMAGES.services.clearAligners,
+  },
+  {
+    title: "Laser Gum Treatment",
+    slug: "laser-gum-treatment",
+    image: IMAGES.services.laserGumTreatment,
+  },
+  {
+    title: "Cosmetic Dentistry",
+    slug: "cosmetic-dentistry",
+    image: IMAGES.services.cosmeticDentistry,
+  },
+  {
+    title: "Orthodontic Treatment",
+    slug: "orthodontic-treatment",
+    image: IMAGES.services.orthodonticTreatment,
+  },
+  {
+    title: "Paediatric Dentistry",
+    slug: "paediatric-dentistry",
+    image: IMAGES.services.paediatricDentistry,
+  },
+  {
+    title: "Periodontics",
+    slug: "periodontics",
+    image: IMAGES.services.periodontics,
+  },
+  {
+    title: "Restorative Dentistry",
+    slug: "restorative-dentistry",
+    image: IMAGES.services.restorativeDentistry,
   },
   {
     title: "Teeth Whitening",
     slug: "teeth-whitening",
-    image: "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&q=80",
+    image: IMAGES.services.teethWhitening,
   },
   {
     title: "Root Canal Treatment",
     slug: "root-canal",
-    image: "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=400&q=80",
-  },
-  {
-    title: "Braces & Aligners",
-    slug: "braces-aligners",
-    image: "https://images.unsplash.com/photo-1598256989800-fe5f95da9787?w=400&q=80",
+    image: IMAGES.services.rootCanal,
   },
   {
     title: "Crowns & Bridges",
     slug: "crowns-bridges",
-    image: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=400&q=80",
+    image: IMAGES.services.crowns,
   },
   {
     title: "Dental Implants",
     slug: "dental-implants",
-    image: "https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?w=400&q=80",
+    image: IMAGES.services.implants,
   },
   {
     title: "Wisdom Tooth Extraction",
     slug: "wisdom-tooth",
-    image: "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=400&q=80",
+    image: IMAGES.services.wisdomTooth,
   },
   {
     title: "Smile Design",
     slug: "smile-design",
-    image: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&q=80",
+    image: IMAGES.services.smileDesign,
   },
 ];
 

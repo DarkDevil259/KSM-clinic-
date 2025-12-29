@@ -1,6 +1,7 @@
 import { NavLink, Link } from "react-router-dom";
 import { Button } from "./Button";
 import { CLINIC } from "../constants/clinic";
+import { IMAGES } from "../constants/images";
 import { Menu, Clock } from "lucide-react";
 import { useState } from "react";
 
@@ -38,8 +39,8 @@ export function Navbar() {
       <div className="container-page">
         <div className="flex h-20 items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="grid h-12 w-12 place-items-center rounded-xl bg-brand-600 text-white shadow-soft transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
-              <span className="text-base font-black">KSM</span>
+            <div className="h-20 w-20 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
+              <img src={IMAGES.logo} alt="KSM Dental Clinic" className="h-full w-full object-contain" />
             </div>
             <div className="leading-tight">
               <div className="text-base font-extrabold text-navy-900 transition-colors group-hover:text-brand-600">{CLINIC.name}</div>

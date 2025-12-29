@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { CLINIC } from "../constants/clinic";
+import { IMAGES } from "../constants/images";
 import { Mail, MapPin, Phone, Clock, Facebook, Instagram, Twitter, Linkedin, Youtube } from "lucide-react";
 
 export function Footer() {
@@ -21,8 +22,8 @@ export function Footer() {
           {/* Clinic Info */}
           <div className="lg:col-span-2">
             <Link to="/" className="inline-flex items-center gap-2 group">
-              <div className="grid h-9 w-9 place-items-center rounded-lg bg-brand-600 text-white shadow-soft transition-transform group-hover:scale-110 group-hover:rotate-3">
-                <span className="text-xs font-black">KSM</span>
+              <div className="h-16 w-16 transition-transform group-hover:scale-110 group-hover:rotate-3">
+                <img src={IMAGES.logo} alt="KSM Dental Clinic" className="h-full w-full object-contain" />
               </div>
               <div className="leading-tight">
                 <div className="text-sm font-extrabold text-navy-900 transition-colors group-hover:text-brand-600">{CLINIC.name}</div>
