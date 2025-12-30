@@ -337,15 +337,12 @@ app.post("/api/appointment", async (req, res) => {
     </div>
   `;
 
-  try {
-    // Clean FROM_EMAIL (remove quotes if present)
-    const fromEmail = (process.env.FROM_EMAIL || process.env.SMTP_USER || "").replace(/^["']|["']$/g, "");
-
-    let adminEmailSent = false;
-    let userEmailSent = false;
-    let emailError = null;
-
+  // Background email sending - fire and forget
+  (async () => {
     try {
+      // Clean FROM_EMAIL (remove quotes if present)
+      const fromEmail = (process.env.FROM_EMAIL || process.env.SMTP_USER || "").replace(/^["']|["']$/g, "");
+
       const transporter = makeTransport();
 
       // Verify SMTP connection first
@@ -361,11 +358,9 @@ app.post("/api/appointment", async (req, res) => {
           text: adminText,
           html: adminHtml,
         });
-        adminEmailSent = true;
+        console.log("Admin email sent successfully (background)");
       } catch (emailErr) {
-        // eslint-disable-next-line no-console
         console.error("Failed to send admin email:", emailErr);
-        emailError = emailErr.message;
       }
 
       // Send acknowledgement email to user
@@ -377,57 +372,20 @@ app.post("/api/appointment", async (req, res) => {
           text: userText,
           html: userHtml,
         });
-        userEmailSent = true;
+        console.log("User email sent successfully (background)");
       } catch (emailErr) {
-        // eslint-disable-next-line no-console
         console.error("Failed to send user email:", emailErr);
-        // Don't fail the whole request if user email fails
       }
-    } catch (transportErr) {
-      // eslint-disable-next-line no-console
-      console.error("SMTP transport error:", transportErr);
-      emailError = transportErr.message;
+    } catch (err) {
+      console.error("Background email error:", err);
     }
+  })();
 
-    // Return success with email status
-    return res.json({
-      ok: true,
-      emailSent: adminEmailSent || userEmailSent,
-      adminEmailSent,
-      userEmailSent,
-      emailError: emailError || undefined,
-    });
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error("Appointment booking error:", err);
-    // eslint-disable-next-line no-console
-    console.error("Error details:", {
-      message: err.message,
-      stack: err.stack,
-      code: err.code,
-      responseCode: err.responseCode,
-      command: err.command,
-    });
-
-    // Provide more helpful error messages
-    let errorMessage = "Could not send booking. Please try again in a moment.";
-    if (err.code === "EAUTH") {
-      errorMessage = "Email authentication failed. Please check your SMTP credentials.";
-    } else if (err.code === "ECONNECTION") {
-      errorMessage = "Could not connect to email server. Please check your SMTP settings.";
-    } else if (err.message) {
-      errorMessage = err.message;
-    }
-
-    return res.status(500).json({
-      ok: false,
-      error: errorMessage,
-      details: process.env.NODE_ENV === 'development' ? {
-        message: err.message,
-        code: err.code,
-      } : undefined,
-    });
-  }
+  // Return success immediately
+  return res.json({
+    ok: true,
+    emailSent: true, // Optimistic success
+  });
 });
 
 app.post("/api/contact", async (req, res) => {
@@ -479,56 +437,33 @@ app.post("/api/contact", async (req, res) => {
     </div>
   `;
 
-  try {
-    // Clean FROM_EMAIL (remove quotes if present)
-    const fromEmail = (process.env.FROM_EMAIL || process.env.SMTP_USER || "").replace(/^["']|["']$/g, "");
+  // Background email sending - fire and forget
+  (async () => {
+    try {
+      // Clean FROM_EMAIL (remove quotes if present)
+      const fromEmail = (process.env.FROM_EMAIL || process.env.SMTP_USER || "").replace(/^["']|["']$/g, "");
 
-    const transporter = makeTransport();
+      const transporter = makeTransport();
 
-    // Verify SMTP connection first
-    await transporter.verify();
+      // Verify SMTP connection first
+      await transporter.verify();
 
-    await transporter.sendMail({
-      from: fromEmail,
-      to: ownerEmail,
-      replyTo: data.email,
-      subject,
-      text,
-      html,
-    });
-
-    return res.json({ ok: true });
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error("Contact form error:", err);
-    // eslint-disable-next-line no-console
-    console.error("Error details:", {
-      message: err.message,
-      stack: err.stack,
-      code: err.code,
-      responseCode: err.responseCode,
-      command: err.command,
-    });
-
-    // Provide more helpful error messages
-    let errorMessage = "Could not send message. Please try again in a moment.";
-    if (err.code === "EAUTH") {
-      errorMessage = "Email authentication failed. Please check your SMTP credentials.";
-    } else if (err.code === "ECONNECTION") {
-      errorMessage = "Could not connect to email server. Please check your SMTP settings.";
-    } else if (err.message) {
-      errorMessage = err.message;
+      await transporter.sendMail({
+        from: fromEmail,
+        to: ownerEmail,
+        replyTo: data.email,
+        subject,
+        text,
+        html,
+      });
+      console.log("Contact email sent successfully (background)");
+    } catch (err) {
+      console.error("Background contact email error:", err);
     }
+  })();
 
-    return res.status(500).json({
-      ok: false,
-      error: errorMessage,
-      details: process.env.NODE_ENV === 'development' ? {
-        message: err.message,
-        code: err.code,
-      } : undefined,
-    });
-  }
+  // Return success immediately
+  return res.json({ ok: true });
 });
 
 // Stats endpoint - returns reviews count, years of experience, and patient count
