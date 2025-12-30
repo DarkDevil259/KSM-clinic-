@@ -1,6 +1,8 @@
 type ApiOk<T> = { ok: true } & T;
 type ApiErr = { ok: false; error: string; details?: unknown };
 
+// In production (Vercel), API functions are at /api/*
+// In development, use VITE_API_BASE if set, otherwise use relative paths
 const API_BASE = (import.meta.env.VITE_API_BASE as string | undefined) || "";
 
 export async function apiPost<TResponse>(
