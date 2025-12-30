@@ -6,24 +6,25 @@ export function About() {
     return (
         <div>
             {/* Banner */}
-            <div className="bg-gradient-to-r from-brand-600 to-brand-500">
-                <div className="container-page py-8 md:py-12">
+            <div className="bg-gradient-to-br from-brand-700 via-brand-600 to-dental-500 relative overflow-hidden">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.1),transparent_50%)]" />
+                <div className="container-page py-8 md:py-12 px-4 sm:px-0">
                     <Reveal delay={0.1}>
                         <Link
                             to="/"
-                            className="mb-4 inline-flex items-center gap-2 text-sm font-semibold text-white/90 hover:text-white transition"
+                            className="mb-4 inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-white/90 hover:text-white transition"
                         >
                             <ArrowLeft className="h-4 w-4" />
                             Back to Home
                         </Link>
                     </Reveal>
                     <Reveal delay={0.2}>
-                        <h1 className="text-3xl font-black text-white md:text-4xl lg:text-5xl">
+                        <h1 className="text-2xl sm:text-3xl font-black text-white md:text-4xl lg:text-5xl">
                             About Us
                         </h1>
                     </Reveal>
                     <Reveal delay={0.3}>
-                        <p className="mt-2 max-w-xl text-base text-white/90">
+                        <p className="mt-2 max-w-xl text-sm sm:text-base text-white/90">
                             Trusted dental care in Madurai since years
                         </p>
                     </Reveal>
@@ -32,23 +33,23 @@ export function About() {
 
             {/* About KSM Dental Care Section */}
             <section className="bg-white">
-                <div className="container-page py-12 md:py-16">
+                <div className="container-page py-8 sm:py-12 md:py-16 px-4 sm:px-0">
                     <Reveal delay={0.2} width="100%">
-                        <h2 className="text-3xl font-black text-navy-900 md:text-4xl mb-8 text-center">
+                        <h2 className="text-2xl sm:text-3xl font-black text-navy-900 md:text-4xl mb-6 sm:mb-8 text-center">
                             About KSM Dental Care
                         </h2>
                     </Reveal>
 
                     {/* Content Block 1 - Image Right */}
-                    <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16 mb-16">
+                    <div className="grid items-center gap-8 sm:gap-10 lg:grid-cols-2 lg:gap-16 mb-12 sm:mb-16">
                         <div>
                             <Reveal delay={0.2} width="100%">
-                                <p className="text-lg leading-relaxed text-slate-700">
+                                <p className="text-base sm:text-lg leading-relaxed text-slate-700">
                                     Welcome to KSM Dental Care, a trusted dental clinic in Madurai, known for delivering comprehensive and ethical oral healthcare for individuals and families. With a team of experienced dentists specializing in various branches of dentistry, we provide complete dental solutions under one roof—focused on comfort, quality, and long-term results.
                                 </p>
                             </Reveal>
                             <Reveal delay={0.3} width="100%">
-                                <p className="mt-5 text-lg leading-relaxed text-slate-700">
+                                <p className="mt-4 sm:mt-5 text-base sm:text-lg leading-relaxed text-slate-700">
                                     Our clinic is equipped with advanced dental technology, modern armamentarium, and laser dentistry to ensure precise, minimally invasive, and pain-free treatments. We maintain the highest standards of hygiene and sterilization, creating a safe and welcoming environment where patient comfort and satisfaction come first.
                                 </p>
                             </Reveal>
@@ -109,7 +110,7 @@ export function About() {
                                 <div className="absolute -inset-4 -z-10 rounded-3xl bg-gradient-to-br from-brand-200 via-dental-100 to-brand-100 opacity-50 blur-2xl" />
                                 <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-brand-50 to-dental-50 shadow-xl">
                                     <img
-                                        src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&q=80"
+                                        src="/doctor-photo.jpg"
                                         alt="Dr. M.Umayal"
                                         className="h-auto w-full object-cover"
                                     />

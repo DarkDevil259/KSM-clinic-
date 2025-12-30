@@ -11,12 +11,12 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
     <div className="mb-3 last:mb-0">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex w-full items-center justify-between gap-4 rounded-xl px-6 py-4 text-left transition-all duration-300 shadow-sm ${isOpen
+        className={`flex w-full items-center justify-between gap-3 sm:gap-4 rounded-xl px-4 sm:px-6 py-3 sm:py-4 text-left transition-all duration-300 shadow-sm ${isOpen
           ? "bg-brand-600 text-white shadow-md"
           : "bg-white text-slate-700 hover:bg-slate-50 hover:text-brand-600"
           }`}
       >
-        <span className="text-base font-bold">{question}</span>
+        <span className="text-sm sm:text-base font-bold pr-2">{question}</span>
         <ChevronDown
           className={`h-5 w-5 shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : ""
             }`}
@@ -27,8 +27,8 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
           }`}
       >
         <div className="overflow-hidden">
-          <div className="rounded-b-xl bg-slate-50 px-6 py-4 border-x border-b border-slate-100">
-            <p className="text-sm leading-relaxed text-slate-600">{answer}</p>
+          <div className="rounded-b-xl bg-slate-50 px-4 sm:px-6 py-3 sm:py-4 border-x border-b border-slate-100">
+            <p className="text-sm sm:text-base leading-relaxed text-slate-600">{answer}</p>
           </div>
         </div>
       </div>
@@ -678,7 +678,7 @@ export function ServiceDetail() {
   return (
     <div className="bg-white">
       {/* Hero Section */}
-      <div className="relative h-[50vh] min-h-[400px] overflow-hidden">
+      <div className="relative h-[35vh] min-h-[280px] overflow-hidden">
         <img
           src={service.image}
           alt={service.title}
@@ -697,7 +697,7 @@ export function ServiceDetail() {
               </Link>
             </Reveal>
             <Reveal delay={0.2}>
-              <h1 className="text-3xl font-black text-white md:text-5xl">
+              <h1 className="text-2xl sm:text-3xl font-black text-white md:text-5xl">
                 {service.title}
               </h1>
             </Reveal>
@@ -706,13 +706,13 @@ export function ServiceDetail() {
       </div>
 
       {/* Content */}
-      <div className="container-page py-12 md:py-16">
+      <div className="container-page py-8 sm:py-12 md:py-16 px-4 sm:px-0">
         <div className="mx-auto max-w-4xl">
           {/* Overview */}
           <section>
             <Reveal width="100%">
-              <h2 className="text-2xl font-black text-brand-600">OVERVIEW:</h2>
-              <p className="mt-4 text-lg leading-relaxed text-slate-700">
+              <h2 className="text-xl sm:text-2xl font-black text-brand-600">OVERVIEW:</h2>
+              <p className="mt-4 text-base sm:text-lg leading-relaxed text-slate-700">
                 <span className="float-left mr-2 text-5xl font-black text-navy-900">
                   {service.overview.charAt(0)}
                 </span>
@@ -733,21 +733,21 @@ export function ServiceDetail() {
           </Reveal>
 
           {/* What Is */}
-          <section className="mt-12">
+          <section className="mt-8 sm:mt-12">
             <Reveal width="100%">
-              <h2 className="text-2xl font-black uppercase tracking-wide text-brand-600">
+              <h2 className="text-xl sm:text-2xl font-black uppercase tracking-wide text-brand-600">
                 {service.whatIs.title}
               </h2>
-              <p className="mt-4 leading-relaxed text-slate-700">
+              <p className="mt-4 text-base sm:text-lg leading-relaxed text-slate-700">
                 {service.whatIs.content}
               </p>
             </Reveal>
           </section>
 
           {/* Why Needed */}
-          <section className="mt-12">
+          <section className="mt-8 sm:mt-12">
             <Reveal width="100%">
-              <h2 className="text-2xl font-black uppercase tracking-wide text-brand-600">
+              <h2 className="text-xl sm:text-2xl font-black uppercase tracking-wide text-brand-600">
                 {service.whyNeeded.title}
               </h2>
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -763,9 +763,9 @@ export function ServiceDetail() {
 
           {/* FAQ */}
           {service.faq && (
-            <section className="mt-12">
+            <section className="mt-8 sm:mt-12">
               <Reveal width="100%">
-                <h2 className="text-2xl font-black uppercase tracking-wide text-brand-600">
+                <h2 className="text-xl sm:text-2xl font-black uppercase tracking-wide text-brand-600">
                   Frequently Asked Questions
                 </h2>
                 <div className="mt-6">

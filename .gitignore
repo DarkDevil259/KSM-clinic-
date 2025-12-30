@@ -17,5 +17,7 @@ client/.env.local
 # Server
 server/node_modules/
 server/.env
+server/stats.json
+
 
 

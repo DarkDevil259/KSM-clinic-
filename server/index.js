@@ -6,6 +6,8 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const nodemailer = require("nodemailer");
 const { z } = require("zod");
+const fs = require("fs");
+const path = require("path");
 
 const app = express();
 
@@ -33,6 +35,21 @@ app.use(
 
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true });
+});
+
+// Debug endpoint to check current email configuration (without exposing passwords)
+app.get("/api/email-config", (_req, res) => {
+  res.json({
+    ok: true,
+    config: {
+      smtpHost: process.env.SMTP_HOST || "not set",
+      smtpPort: process.env.SMTP_PORT || "not set",
+      smtpUser: process.env.SMTP_USER || "not set",
+      fromEmail: (process.env.FROM_EMAIL || process.env.SMTP_USER || "not set").replace(/^["']|["']$/g, ""),
+      ownerEmail: process.env.OWNER_EMAIL || "not set",
+      hasSmtpPass: !!process.env.SMTP_PASS,
+    },
+  });
 });
 
 // Test endpoint to check SMTP configuration
@@ -99,6 +116,76 @@ function escapeHtml(text) {
     .replace(/'/g, "&#039;");
 }
 
+// File-based storage for patient count
+const STATS_FILE = path.join(__dirname, "stats.json");
+
+// In-memory cache for stats to avoid reading file on every request
+let statsCache = null;
+let statsCacheTime = 0;
+const STATS_CACHE_TTL = 30000; // Cache for 30 seconds (stats don't change frequently)
+
+function getStats(forceReload = false) {
+  // Use cache if available and not forcing reload
+  const now = Date.now();
+  if (!forceReload && statsCache && (now - statsCacheTime) < STATS_CACHE_TTL) {
+    return statsCache;
+  }
+
+  try {
+    if (fs.existsSync(STATS_FILE)) {
+      const data = fs.readFileSync(STATS_FILE, "utf8");
+      const parsed = JSON.parse(data);
+      // Only log on initial load or when cache expires
+      if (!statsCache) {
+        // eslint-disable-next-line no-console
+        console.log("Loaded stats from file:", parsed);
+      }
+      statsCache = parsed;
+      statsCacheTime = now;
+      return parsed;
+    }
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error("Error reading stats file:", err);
+  }
+  // Default values - start with 400 patients
+  const defaultStats = {
+    patientCount: 400,
+  };
+  if (!statsCache) {
+    // eslint-disable-next-line no-console
+    console.log("Using default stats:", defaultStats);
+  }
+  statsCache = defaultStats;
+  statsCacheTime = now;
+  return defaultStats;
+}
+
+function saveStats(stats) {
+  try {
+    fs.writeFileSync(STATS_FILE, JSON.stringify(stats, null, 2), "utf8");
+    // Update cache immediately after saving
+    statsCache = stats;
+    statsCacheTime = Date.now();
+    // eslint-disable-next-line no-console
+    console.log(`Stats saved to ${STATS_FILE}:`, stats);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error("Error writing stats file:", err);
+    throw err; // Re-throw to allow caller to handle
+  }
+}
+
+function incrementPatientCount() {
+  const stats = getStats(true); // Force reload to get latest
+  const currentCount = stats.patientCount || 400;
+  stats.patientCount = currentCount + 1;
+  saveStats(stats);
+  // eslint-disable-next-line no-console
+  console.log(`Patient count updated: ${currentCount} -> ${stats.patientCount}`);
+  return stats.patientCount;
+}
+
 const appointmentSchema = z.object({
   fullName: z.string().min(2).max(80),
   phone: z.string().min(7).max(25),
@@ -112,7 +199,7 @@ const appointmentSchema = z.object({
 const contactSchema = z.object({
   fullName: z.string().min(2).max(80),
   email: z.string().email(),
-  phone: z.string().min(7).max(25).optional().or(z.literal("")),
+  phone: z.string().min(7).max(25),
   message: z.string().min(5).max(1500),
 });
 
@@ -129,6 +216,17 @@ app.post("/api/appointment", async (req, res) => {
   const ownerEmail = requiredEnv("OWNER_EMAIL");
 
   const data = parsed.data;
+  
+  // Increment patient count immediately when appointment is booked (before emails)
+  try {
+    incrementPatientCount();
+    // eslint-disable-next-line no-console
+    console.log("Patient count incremented successfully");
+  } catch (countErr) {
+    // eslint-disable-next-line no-console
+    console.error("Error incrementing patient count:", countErr);
+    // Continue with appointment processing even if count increment fails
+  }
   
   // Format date for display with error handling
   let formattedDate;
@@ -423,6 +521,146 @@ app.post("/api/contact", async (req, res) => {
         message: err.message,
         code: err.code,
       } : undefined,
+    });
+  }
+});
+
+// Stats endpoint - returns reviews count, years of experience, and patient count
+app.get("/api/stats", async (_req, res) => {
+  try {
+    const stats = getStats();
+    let reviewsCount = 20; // Default fallback
+    
+    // Try to get reviews count from Google API
+    const apiKey = process.env.GOOGLE_PLACES_API_KEY;
+    const placeId = process.env.GOOGLE_PLACE_ID;
+    
+    if (apiKey && placeId) {
+      try {
+        const url = `https://places.googleapis.com/v1/places/${placeId}`;
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Goog-Api-Key": apiKey,
+            "X-Goog-FieldMask": "rating,userRatingCount",
+          },
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.userRatingCount) {
+            reviewsCount = data.userRatingCount;
+          }
+        }
+      } catch (err) {
+        // Fallback to default if API fails
+        // eslint-disable-next-line no-console
+        console.error("Error fetching reviews count:", err);
+      }
+    }
+    
+    return res.json({
+      ok: true,
+      stats: {
+        reviews: reviewsCount,
+        yearsExperience: 18,
+        happyPatients: stats.patientCount || 400,
+      },
+    });
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error("Error fetching stats:", err);
+    return res.status(500).json({
+      ok: false,
+      error: "Failed to fetch stats",
+    });
+  }
+});
+
+// Google Reviews endpoint
+app.get("/api/reviews", async (_req, res) => {
+  try {
+    const apiKey = process.env.GOOGLE_PLACES_API_KEY;
+    const placeId = process.env.GOOGLE_PLACE_ID;
+
+    if (!apiKey || !placeId) {
+      return res.status(200).json({
+        ok: true,
+        reviews: [],
+        message: "Google Places API not configured. Please add GOOGLE_PLACES_API_KEY and GOOGLE_PLACE_ID to your .env file.",
+      });
+    }
+
+    // Fetch place details with reviews from Google Places API (New)
+    // Using the new Places API endpoint
+    const url = `https://places.googleapis.com/v1/places/${placeId}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": apiKey,
+        "X-Goog-FieldMask": "reviews.authorAttribution.displayName,reviews.text.text,reviews.rating,reviews.publishTime,reviews.relativePublishTimeDescription,displayName,rating",
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      // eslint-disable-next-line no-console
+      console.error("Google Places API error:", response.status, errorText);
+      
+      // Try fallback to old Places API if new API fails
+      try {
+        const oldApiUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=reviews,rating&key=${apiKey}`;
+        const oldApiResponse = await fetch(oldApiUrl);
+        if (oldApiResponse.ok) {
+          const oldApiData = await oldApiResponse.json();
+          if (oldApiData.result && oldApiData.result.reviews) {
+            const reviews = oldApiData.result.reviews.map((review) => ({
+              name: review.author_name || "Anonymous",
+              text: review.text || "",
+              rating: review.rating || 5,
+              time: review.time || null,
+              relativeTimeDescription: review.relative_time_description || null,
+            }));
+            return res.json({
+              ok: true,
+              reviews: reviews,
+            });
+          }
+        }
+      } catch (fallbackErr) {
+        // eslint-disable-next-line no-console
+        console.error("Fallback API also failed:", fallbackErr);
+      }
+      
+      return res.status(200).json({
+        ok: true,
+        reviews: [],
+        message: "Unable to fetch reviews from Google. Please check your API configuration.",
+      });
+    }
+
+    const data = await response.json();
+    const reviews = (data.reviews || []).map((review) => ({
+      name: review.authorAttribution?.displayName || "Anonymous",
+      text: review.text?.text || "",
+      rating: review.rating || 5,
+      time: review.publishTime || null,
+      relativeTimeDescription: review.relativePublishTimeDescription || null,
+    }));
+
+    return res.json({
+      ok: true,
+      reviews: reviews,
+    });
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error("Error fetching Google reviews:", err);
+    return res.status(200).json({
+      ok: true,
+      reviews: [],
+      message: "Error fetching reviews. Please try again later.",
     });
   }
 });

@@ -7,14 +7,20 @@ import { TextField } from "../components/TextField";
 import { TextAreaField } from "../components/TextAreaField";
 import { apiPost } from "../lib/api";
 import { CLINIC } from "../constants/clinic";
-import { Mail, MapPin, Phone, ArrowLeft } from "lucide-react";
+import { Mail, MapPin, Phone, ArrowLeft, Facebook, Instagram, Linkedin } from "lucide-react";
+
+const socialLinks = [
+  { icon: Facebook, href: "https://www.facebook.com/share/17ned7ZF52/", label: "Facebook", color: "hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50" },
+  { icon: Instagram, href: "https://www.instagram.com/ksmdentalcare26?utm_source=qr&igsh=aG5reXBraGQzdWRt", label: "Instagram", color: "hover:text-pink-600 hover:border-pink-200 hover:bg-pink-50" },
+  { icon: Linkedin, href: "https://www.linkedin.com/in/umayal-mohan-a01576a6?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app", label: "LinkedIn", color: "hover:text-blue-700 hover:border-blue-200 hover:bg-blue-50" },
+];
 import { Link } from "react-router-dom";
 import { Reveal } from "../components/Reveal";
 
 const schema = z.object({
   fullName: z.string().min(2, "Please enter your full name."),
   email: z.string().email("Please enter a valid email."),
-  phone: z.string().min(7, "Please enter a valid phone number.").optional().or(z.literal("")),
+  phone: z.string().min(7, "Please enter a valid phone number."),
   message: z.string().min(5, "Please enter a message.").max(1500, "Message is too long."),
 });
 
@@ -51,7 +57,8 @@ export function Contact() {
   return (
     <div>
       {/* Banner */}
-      <div className="bg-gradient-to-r from-brand-600 to-brand-500">
+      <div className="bg-gradient-to-br from-brand-700 via-brand-600 to-dental-500 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.1),transparent_50%)]" />
         <div className="container-page py-8 md:py-12">
           <Reveal delay={0.1}>
             <Link
@@ -75,12 +82,12 @@ export function Contact() {
         </div>
       </div>
 
-      <div className="container-page pt-12 pb-8 md:pt-16 md:pb-12">
-        <div className="grid gap-10 lg:grid-cols-2">
+      <div className="container-page pt-8 sm:pt-12 pb-8 md:pt-16 md:pb-12 px-4 sm:px-0">
+        <div className="grid gap-8 sm:gap-10 lg:grid-cols-2">
           <div>
             <Reveal delay={0.2} width="100%">
               <div className="mt-8 grid gap-4">
-                <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-soft">
+                <div className="rounded-2xl border border-slate-100 bg-white p-6">
                   <div className="flex items-start gap-3">
                     <Phone className="mt-1 h-5 w-5 text-brand-600" />
                     <div>
@@ -91,7 +98,7 @@ export function Contact() {
                     </div>
                   </div>
                 </div>
-                <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-soft">
+                <div className="rounded-2xl border border-slate-100 bg-white p-6">
                   <div className="flex items-start gap-3">
                     <Mail className="mt-1 h-5 w-5 text-brand-600" />
                     <div>
@@ -105,7 +112,7 @@ export function Contact() {
                     </div>
                   </div>
                 </div>
-                <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-soft">
+                <div className="rounded-2xl border border-slate-100 bg-white p-6">
                   <div className="flex items-start gap-3">
                     <MapPin className="mt-1 h-5 w-5 text-brand-600" />
                     <div>
@@ -119,15 +126,25 @@ export function Contact() {
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-brand-200 bg-brand-50 p-5">
-                  <div className="text-sm font-extrabold text-navy-900">Want to book?</div>
-                  <div className="mt-1 text-sm text-slate-700">
-                    Use our appointment form for instant owner notification.
-                  </div>
-                  <div className="mt-3">
-                    <Button to="/appointment" variant="secondary">
-                      Book Appointment
-                    </Button>
+                {/* Social Media */}
+                <div className="rounded-2xl border border-slate-100 bg-white p-6">
+                  <div className="text-sm font-extrabold text-navy-900 mb-3">Follow Us</div>
+                  <div className="flex items-center gap-2">
+                    {socialLinks.map((social) => {
+                      const Icon = social.icon;
+                      return (
+                        <a
+                          key={social.label}
+                          href={social.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={social.label}
+                          className={`flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition-all duration-200 ${social.color} shadow-sm hover:shadow-md hover:-translate-y-0.5`}
+                        >
+                          <Icon className="h-5 w-5" />
+                        </a>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -135,7 +152,7 @@ export function Contact() {
           </div>
 
           <Reveal delay={0.3} width="100%">
-            <div className="rounded-[2rem] border border-slate-100 bg-white px-6 pt-6 pb-4 shadow-soft">
+            <div className="rounded-[2rem] border border-slate-100 bg-white px-4 sm:px-6 pt-4 sm:pt-6 pb-4 shadow-soft">
               <form className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <TextField
@@ -155,7 +172,7 @@ export function Contact() {
                 </div>
 
                 <TextField
-                  label="Phone (optional)"
+                  label="Phone"
                   placeholder="e.g. 9876543210"
                   error={errors.phone?.message}
                   inputMode="tel"

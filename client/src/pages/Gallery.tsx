@@ -11,24 +11,25 @@ export function Gallery() {
   return (
     <div>
       {/* Banner */}
-      <div className="bg-gradient-to-r from-brand-600 to-brand-500">
-        <div className="container-page py-8 md:py-12">
+      <div className="bg-gradient-to-br from-brand-700 via-brand-600 to-dental-500 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.1),transparent_50%)]" />
+        <div className="container-page py-8 md:py-12 px-4 sm:px-0">
           <Reveal delay={0.1}>
             <Link
               to="/"
-              className="mb-4 inline-flex items-center gap-2 text-sm font-semibold text-white/90 hover:text-white transition"
+              className="mb-4 inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-white/90 hover:text-white transition"
             >
               <ArrowLeft className="h-4 w-4" />
               Back to Home
             </Link>
           </Reveal>
           <Reveal delay={0.2}>
-            <h1 className="text-3xl font-black text-white md:text-4xl lg:text-5xl">
+            <h1 className="text-2xl sm:text-3xl font-black text-white md:text-4xl lg:text-5xl">
               Gallery
             </h1>
           </Reveal>
           <Reveal delay={0.3}>
-            <p className="mt-2 max-w-xl text-base text-white/90">
+            <p className="mt-2 max-w-xl text-sm sm:text-base text-white/90">
               Take a look inside our clinic
             </p>
           </Reveal>
@@ -36,8 +37,8 @@ export function Gallery() {
       </div>
 
       <div className="bg-gradient-to-b from-brand-50 via-white to-white">
-        <div className="container-page py-12 md:py-16">
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="container-page py-8 sm:py-12 md:py-16 px-4 sm:px-0">
+          <div className="mt-8 sm:mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {photos.map((photo, i) => (
               <Reveal key={photo.id} delay={i * 0.05} width="100%">
                 <button
