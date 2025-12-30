@@ -135,12 +135,12 @@ export function About() {
                             </Reveal>
                             <Reveal delay={0.3} width="100%">
                                 <p className="mt-4 text-lg leading-relaxed text-slate-700">
-                                    She completed her BDS in 2008 from Saveetha Dental College and earned her MDS in Periodontology from SRM Dental College, Ramapuram in 2014. Her passion for dentistry and teaching led her to an accomplished academic career at Best Dental Science College, where she served from 2015 to 2025, progressing from Senior Lecturer to Professor.
+                                    She completed her BDS in 2008 from Saveetha Dental College and earned her MDS in Periodontology from SRM Dental College, Ramapuram, in 2014. Her passion for dentistry and teaching led her to a distinguished academic career at Best Dental Science College, where she has been serving since 2015 and is currently working as an Associate Professor.
                                 </p>
                             </Reveal>
                             <Reveal delay={0.4} width="100%">
                                 <p className="mt-4 text-lg leading-relaxed text-slate-700">
-                                    Now, as the Founder, Dr.M.Umayal is committed to delivering ethical, advanced, and patient-centric dental care in a warm and comfortable environment. Her approach focuses not just on treating dental problems, but on preventing disease, preserving natural teeth, and creating healthy, confident smiles for life.
+                                    Now, as the Founder of KSM Dental Care, Dr. M. Umayal is committed to delivering ethical, advanced, and patient-centric dental care in a warm and comfortable environment. Her approach focuses not only on treating dental problems but also on preventing disease, preserving natural teeth, and creating healthy, confident smiles for life.
                                 </p>
                             </Reveal>
 

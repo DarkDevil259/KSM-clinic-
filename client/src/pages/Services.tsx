@@ -54,6 +54,11 @@ const services = [
     slug: "smile-design",
     image: IMAGES.services.smileDesign,
   },
+  {
+    title: "Wisdom Tooth Extraction",
+    slug: "wisdom-tooth",
+    image: IMAGES.services.wisdomTooth,
+  },
 ];
 
 export function Services() {
