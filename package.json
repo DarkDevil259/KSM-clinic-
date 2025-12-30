@@ -1,6 +1,9 @@
 {
   "name": "ksm-dental-care",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=18.x"
+  },
   "scripts": {
     "dev": "cd client && npm run dev",
     "build": "cd client && npm run build",
