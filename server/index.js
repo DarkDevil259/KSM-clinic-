@@ -11,6 +11,8 @@ const path = require("path");
 
 const app = express();
 
+const PORT = Number(process.env.PORT || 5000);
+
 const allowedOrigins = [
   "http://localhost:5173",
   "https://ksmclinic.netlify.app",
