@@ -122,6 +122,16 @@ function escapeHtml(text) {
     .replace(/'/g, "&#039;");
 }
 
+// Helper function to add timeout to promises
+function withTimeout(promise, timeoutMs = 30000) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error(`Operation timed out after ${timeoutMs}ms`)), timeoutMs)
+    ),
+  ]);
+}
+
 // File-based storage for patient count
 const STATS_FILE = path.join(__dirname, "stats.json");
 
@@ -337,55 +347,57 @@ app.post("/api/appointment", async (req, res) => {
     </div>
   `;
 
-  // Background email sending - fire and forget
-  (async () => {
-    try {
-      // Clean FROM_EMAIL (remove quotes if present)
-      const fromEmail = (process.env.FROM_EMAIL || process.env.SMTP_USER || "").replace(/^["']|["']$/g, "");
+  // Send emails synchronously so we can catch and return errors
+  try {
+    // Clean FROM_EMAIL (remove quotes if present)
+    const fromEmail = (process.env.FROM_EMAIL || process.env.SMTP_USER || "").replace(/^["']|["']$/g, "");
 
-      const transporter = makeTransport();
+    const transporter = makeTransport();
 
-      // Verify SMTP connection first
-      await transporter.verify();
+    // Verify SMTP connection first (with timeout)
+    await withTimeout(transporter.verify(), 10000);
 
-      // Send email to admin
-      try {
-        await transporter.sendMail({
-          from: fromEmail,
-          to: ownerEmail,
-          replyTo: data.email || undefined,
-          subject: adminSubject,
-          text: adminText,
-          html: adminHtml,
-        });
-        console.log("Admin email sent successfully (background)");
-      } catch (emailErr) {
-        console.error("Failed to send admin email:", emailErr);
-      }
+    // Send email to admin (with timeout)
+    await withTimeout(
+      transporter.sendMail({
+        from: fromEmail,
+        to: ownerEmail,
+        replyTo: data.email || undefined,
+        subject: adminSubject,
+        text: adminText,
+        html: adminHtml,
+      }),
+      20000
+    );
+    console.log("Admin email sent successfully");
 
-      // Send acknowledgement email to user
-      try {
-        await transporter.sendMail({
-          from: fromEmail,
-          to: data.email,
-          subject: userSubject,
-          text: userText,
-          html: userHtml,
-        });
-        console.log("User email sent successfully (background)");
-      } catch (emailErr) {
-        console.error("Failed to send user email:", emailErr);
-      }
-    } catch (err) {
-      console.error("Background email error:", err);
-    }
-  })();
+    // Send acknowledgement email to user (with timeout)
+    await withTimeout(
+      transporter.sendMail({
+        from: fromEmail,
+        to: data.email,
+        subject: userSubject,
+        text: userText,
+        html: userHtml,
+      }),
+      20000
+    );
+    console.log("User email sent successfully");
 
-  // Return success immediately
-  return res.json({
-    ok: true,
-    emailSent: true, // Optimistic success
-  });
+    // Return success with confirmation
+    return res.json({
+      ok: true,
+      emailSent: true,
+    });
+  } catch (err) {
+    console.error("Email sending error:", err);
+    // Return error to client so they know what went wrong
+    return res.status(500).json({
+      ok: false,
+      error: `Failed to send email: ${err.message || "Unknown error"}. Please try again or contact us directly.`,
+      emailError: true,
+    });
+  }
 });
 
 app.post("/api/contact", async (req, res) => {
@@ -437,33 +449,41 @@ app.post("/api/contact", async (req, res) => {
     </div>
   `;
 
-  // Background email sending - fire and forget
-  (async () => {
-    try {
-      // Clean FROM_EMAIL (remove quotes if present)
-      const fromEmail = (process.env.FROM_EMAIL || process.env.SMTP_USER || "").replace(/^["']|["']$/g, "");
+  // Send email synchronously so we can catch and return errors
+  try {
+    // Clean FROM_EMAIL (remove quotes if present)
+    const fromEmail = (process.env.FROM_EMAIL || process.env.SMTP_USER || "").replace(/^["']|["']$/g, "");
 
-      const transporter = makeTransport();
+    const transporter = makeTransport();
 
-      // Verify SMTP connection first
-      await transporter.verify();
+    // Verify SMTP connection first (with timeout)
+    await withTimeout(transporter.verify(), 10000);
 
-      await transporter.sendMail({
+    // Send email (with timeout)
+    await withTimeout(
+      transporter.sendMail({
         from: fromEmail,
         to: ownerEmail,
         replyTo: data.email,
         subject,
         text,
         html,
-      });
-      console.log("Contact email sent successfully (background)");
-    } catch (err) {
-      console.error("Background contact email error:", err);
-    }
-  })();
+      }),
+      20000
+    );
+    console.log("Contact email sent successfully");
 
-  // Return success immediately
-  return res.json({ ok: true });
+    // Return success
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error("Contact email sending error:", err);
+    // Return error to client so they know what went wrong
+    return res.status(500).json({
+      ok: false,
+      error: `Failed to send email: ${err.message || "Unknown error"}. Please try again or contact us directly.`,
+      emailError: true,
+    });
+  }
 });
 
 // Stats endpoint - returns reviews count, years of experience, and patient count
@@ -602,6 +622,30 @@ app.get("/api/reviews", async (_req, res) => {
       ok: true,
       reviews: [],
       message: "Error fetching reviews. Please try again later.",
+    });
+  }
+});
+
+// Global error handlers to prevent server crashes
+process.on("unhandledRejection", (reason, promise) => {
+  // eslint-disable-next-line no-console
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+});
+
+process.on("uncaughtException", (error) => {
+  // eslint-disable-next-line no-console
+  console.error("Uncaught Exception:", error);
+  // Don't exit - let the server continue running
+});
+
+// Error handler middleware for Express (must be after all routes)
+app.use((err, req, res, next) => {
+  // eslint-disable-next-line no-console
+  console.error("Express error:", err);
+  if (!res.headersSent) {
+    res.status(500).json({
+      ok: false,
+      error: "Internal server error. Please try again later.",
     });
   }
 });
