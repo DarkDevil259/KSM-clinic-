@@ -11,14 +11,18 @@ const path = require("path");
 
 const app = express();
 
-const PORT = Number(process.env.PORT || 5000);
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "http://localhost:5173";
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://ksmclinic.netlify.app",
+  (process.env.CLIENT_ORIGIN || "").replace(/\/$/, "")
+].filter(Boolean);
 
 app.use(helmet());
 app.use(
   cors({
-    origin: [CLIENT_ORIGIN],
+    origin: allowedOrigins,
     methods: ["GET", "POST", "OPTIONS"],
+    credentials: true,
   })
 );
 app.use(express.json({ limit: "100kb" }));
@@ -58,9 +62,9 @@ app.get("/api/test-email", async (_req, res) => {
     const transporter = makeTransport();
     const ownerEmail = requiredEnv("OWNER_EMAIL");
     const fromEmail = (process.env.FROM_EMAIL || process.env.SMTP_USER || "").replace(/^["']|["']$/g, "");
-    
+
     await transporter.verify();
-    
+
     await transporter.sendMail({
       from: fromEmail,
       to: ownerEmail,
@@ -68,7 +72,7 @@ app.get("/api/test-email", async (_req, res) => {
       text: "This is a test email to verify SMTP configuration.",
       html: "<p>This is a test email to verify SMTP configuration.</p>",
     });
-    
+
     return res.json({ ok: true, message: "Test email sent successfully!" });
   } catch (err) {
     // eslint-disable-next-line no-console
@@ -216,7 +220,7 @@ app.post("/api/appointment", async (req, res) => {
   const ownerEmail = requiredEnv("OWNER_EMAIL");
 
   const data = parsed.data;
-  
+
   // Increment patient count immediately when appointment is booked (before emails)
   try {
     incrementPatientCount();
@@ -227,7 +231,7 @@ app.post("/api/appointment", async (req, res) => {
     console.error("Error incrementing patient count:", countErr);
     // Continue with appointment processing even if count increment fails
   }
-  
+
   // Format date for display with error handling
   let formattedDate;
   try {
@@ -334,17 +338,17 @@ app.post("/api/appointment", async (req, res) => {
   try {
     // Clean FROM_EMAIL (remove quotes if present)
     const fromEmail = (process.env.FROM_EMAIL || process.env.SMTP_USER || "").replace(/^["']|["']$/g, "");
-    
+
     let adminEmailSent = false;
     let userEmailSent = false;
     let emailError = null;
 
     try {
       const transporter = makeTransport();
-      
+
       // Verify SMTP connection first
       await transporter.verify();
-      
+
       // Send email to admin
       try {
         await transporter.sendMail({
@@ -402,7 +406,7 @@ app.post("/api/appointment", async (req, res) => {
       responseCode: err.responseCode,
       command: err.command,
     });
-    
+
     // Provide more helpful error messages
     let errorMessage = "Could not send booking. Please try again in a moment.";
     if (err.code === "EAUTH") {
@@ -412,7 +416,7 @@ app.post("/api/appointment", async (req, res) => {
     } else if (err.message) {
       errorMessage = err.message;
     }
-    
+
     return res.status(500).json({
       ok: false,
       error: errorMessage,
@@ -476,12 +480,12 @@ app.post("/api/contact", async (req, res) => {
   try {
     // Clean FROM_EMAIL (remove quotes if present)
     const fromEmail = (process.env.FROM_EMAIL || process.env.SMTP_USER || "").replace(/^["']|["']$/g, "");
-    
+
     const transporter = makeTransport();
-    
+
     // Verify SMTP connection first
     await transporter.verify();
-    
+
     await transporter.sendMail({
       from: fromEmail,
       to: ownerEmail,
@@ -503,7 +507,7 @@ app.post("/api/contact", async (req, res) => {
       responseCode: err.responseCode,
       command: err.command,
     });
-    
+
     // Provide more helpful error messages
     let errorMessage = "Could not send message. Please try again in a moment.";
     if (err.code === "EAUTH") {
@@ -513,7 +517,7 @@ app.post("/api/contact", async (req, res) => {
     } else if (err.message) {
       errorMessage = err.message;
     }
-    
+
     return res.status(500).json({
       ok: false,
       error: errorMessage,
@@ -530,11 +534,11 @@ app.get("/api/stats", async (_req, res) => {
   try {
     const stats = getStats();
     let reviewsCount = 20; // Default fallback
-    
+
     // Try to get reviews count from Google API
     const apiKey = process.env.GOOGLE_PLACES_API_KEY;
     const placeId = process.env.GOOGLE_PLACE_ID;
-    
+
     if (apiKey && placeId) {
       try {
         const url = `https://places.googleapis.com/v1/places/${placeId}`;
@@ -546,7 +550,7 @@ app.get("/api/stats", async (_req, res) => {
             "X-Goog-FieldMask": "rating,userRatingCount",
           },
         });
-        
+
         if (response.ok) {
           const data = await response.json();
           if (data.userRatingCount) {
@@ -559,7 +563,7 @@ app.get("/api/stats", async (_req, res) => {
         console.error("Error fetching reviews count:", err);
       }
     }
-    
+
     return res.json({
       ok: true,
       stats: {
@@ -608,7 +612,7 @@ app.get("/api/reviews", async (_req, res) => {
       const errorText = await response.text();
       // eslint-disable-next-line no-console
       console.error("Google Places API error:", response.status, errorText);
-      
+
       // Try fallback to old Places API if new API fails
       try {
         const oldApiUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=reviews,rating&key=${apiKey}`;
@@ -633,7 +637,7 @@ app.get("/api/reviews", async (_req, res) => {
         // eslint-disable-next-line no-console
         console.error("Fallback API also failed:", fallbackErr);
       }
-      
+
       return res.status(200).json({
         ok: true,
         reviews: [],
