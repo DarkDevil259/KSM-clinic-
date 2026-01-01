@@ -11,9 +11,10 @@ export const CLINIC = {
     { label: "Sunday", value: "Closed" },
   ],
   doctor: {
-    name: "Dr. KSM",
-    credentials: "BDS, MDS",
-    photoUrl: "/doctor-photo.jpg",
+    name: "Dr. Umayal",
+    credentials: "MDS (Periodontics)",
+    designation: "Founder, KSM Dental Care",
+    photoUrl: "/doctor-profile.jpg",
     about: `At KSM Dental Care, we are dedicated to providing high-quality, compassionate dental care in a clean, modern, and welcoming environment. Our goal is simple — to help you achieve and maintain a healthy, beautiful smile for life.`,
     aboutExtended: `Our clinic combines state-of-the-art dental technology with a personalized approach to ensure each patient receives the care they truly need. Whether you're visiting for a routine check-up or a complex procedure, our experienced dental professionals are committed to making your experience comfortable and stress-free.`,
   },

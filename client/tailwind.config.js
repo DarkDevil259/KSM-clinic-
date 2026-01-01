@@ -44,6 +44,9 @@ export default {
       boxShadow: {
         soft: "0 10px 30px rgba(10, 37, 64, 0.12)",
       },
+      fontFamily: {
+        branding: ['Outfit', 'sans-serif'],
+      },
     },
   },
   plugins: [],

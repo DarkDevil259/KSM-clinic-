@@ -24,8 +24,8 @@ export function Footer() {
                                 <img src={IMAGES.logo} alt="KSM Dental Clinic" className="h-full w-full object-contain" />
                             </div>
                             <div className="leading-tight">
-                                <div className="text-sm md:text-base font-extrabold text-navy-900 transition-colors group-hover:text-brand-600">{CLINIC.name}</div>
-                                <div className="text-xs font-medium text-slate-500">Dental Clinic</div>
+                                <div className="text-base md:text-lg font-bold font-branding text-brand-600 transition-colors group-hover:text-brand-700">{CLINIC.name}</div>
+                                <div className="text-xs font-semibold text-brand-600 font-branding tracking-widest uppercase">Dental Clinic</div>
                             </div>
                         </Link>
                         <p className="mt-1.5 max-w-sm text-xs leading-normal text-slate-600 md:text-sm">

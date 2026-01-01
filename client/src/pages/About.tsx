@@ -1,6 +1,7 @@
 import { ArrowLeft, Award, Users, Heart, Zap, Shield, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Reveal } from "../components/Reveal";
+import { CLINIC } from "../constants/clinic";
 
 export function About() {
     return (
@@ -110,15 +111,15 @@ export function About() {
                                 <div className="absolute -inset-4 -z-10 rounded-3xl bg-gradient-to-br from-brand-200 via-dental-100 to-brand-100 opacity-50 blur-2xl" />
                                 <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-brand-50 to-dental-50 shadow-xl">
                                     <img
-                                        src="/doctor-photo.jpg"
-                                        alt="Dr. M.Umayal"
+                                        src={CLINIC.doctor.photoUrl}
+                                        alt={CLINIC.doctor.name}
                                         className="h-auto w-full object-cover"
                                     />
                                 </div>
                                 <div className="mt-6 text-center">
-                                    <h3 className="text-2xl font-black text-brand-700">Dr. M.Umayal</h3>
-                                    <p className="mt-1 text-slate-600">Periodontist & Founder</p>
-                                    <p className="text-sm text-slate-500">BDS, MDS (Periodontology)</p>
+                                    <h3 className="text-2xl font-black text-brand-700">{CLINIC.doctor.name}</h3>
+                                    <p className="mt-1 text-slate-600">{CLINIC.doctor.designation}</p>
+                                    <p className="text-sm text-slate-500">{CLINIC.doctor.credentials}</p>
                                 </div>
                             </div>
                         </Reveal>
@@ -127,10 +128,10 @@ export function About() {
                         <div>
                             <Reveal delay={0.2} width="100%">
                                 <h3 className="text-2xl font-bold text-navy-900 mb-4">
-                                    About Dr. M.Umayal – Periodontist & Founder
+                                    About {CLINIC.doctor.name} – {CLINIC.doctor.credentials}
                                 </h3>
                                 <p className="text-lg leading-relaxed text-slate-700">
-                                    Dr.M.Umayal is a highly trusted Periodontist with over 18 years of experience in advanced gum care, dental education, and comprehensive oral health management. With a strong academic background and extensive clinical exposure, she brings excellence, precision, and compassion to every patient she treats.
+                                    {CLINIC.doctor.name} is a highly trusted Periodontist with over 18 years of experience in advanced gum care, dental education, and comprehensive oral health management. With a strong academic background and extensive clinical exposure, she brings excellence, precision, and compassion to every patient she treats.
                                 </p>
                             </Reveal>
                             <Reveal delay={0.3} width="100%">
@@ -140,14 +141,14 @@ export function About() {
                             </Reveal>
                             <Reveal delay={0.4} width="100%">
                                 <p className="mt-4 text-lg leading-relaxed text-slate-700">
-                                    Now, as the Founder of KSM Dental Care, Dr. M. Umayal is committed to delivering ethical, advanced, and patient-centric dental care in a warm and comfortable environment. Her approach focuses not only on treating dental problems but also on preventing disease, preserving natural teeth, and creating healthy, confident smiles for life.
+                                    Now, as the Founder of KSM Dental Care, {CLINIC.doctor.name} is committed to delivering ethical, advanced, and patient-centric dental care in a warm and comfortable environment. Her approach focuses not only on treating dental problems but also on preventing disease, preserving natural teeth, and creating healthy, confident smiles for life.
                                 </p>
                             </Reveal>
 
                             {/* Why Patients Choose */}
                             <Reveal delay={0.5} width="100%">
                                 <div className="mt-6 bg-brand-50 rounded-2xl p-6">
-                                    <h4 className="text-lg font-bold text-navy-900 mb-4">Why Patients Choose Dr.M.Umayal</h4>
+                                    <h4 className="text-lg font-bold text-navy-900 mb-4">Why Patients Choose {CLINIC.doctor.name}</h4>
                                     <div className="grid gap-3">
                                         {[
                                             "18+ years of clinical and academic excellence",

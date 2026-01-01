@@ -108,8 +108,8 @@ export function Home() {
         console.log("Fetched stats from API:", response);
         if (response && response.stats) {
           // Ensure all values are valid numbers, fallback to defaults if invalid
-          const reviews = typeof response.stats.reviews === 'number' && !isNaN(response.stats.reviews) 
-            ? response.stats.reviews 
+          const reviews = typeof response.stats.reviews === 'number' && !isNaN(response.stats.reviews)
+            ? response.stats.reviews
             : 20;
           const yearsExperience = typeof response.stats.yearsExperience === 'number' && !isNaN(response.stats.yearsExperience)
             ? response.stats.yearsExperience
@@ -117,7 +117,7 @@ export function Home() {
           const happyPatients = typeof response.stats.happyPatients === 'number' && !isNaN(response.stats.happyPatients)
             ? response.stats.happyPatients
             : 400;
-          
+
           const newStats = [
             { value: reviews, suffix: "+", label: "Reviews" },
             { value: yearsExperience, suffix: "+", label: "Years of Experience" },
@@ -290,8 +290,8 @@ export function Home() {
 
               <Reveal delay={0.4}>
                 <div className="mt-8 rounded-2xl border-l-4 border-brand-500 bg-white p-6 shadow-sm">
-                  <p className="font-bold text-navy-800 text-lg">
-                    "Healthy Gums. Confident Smiles."
+                  <p className="font-bold font-branding text-brand-600 text-lg">
+                    "Confident Smiles, Crafted by KSM"
                   </p>
                 </div>
               </Reveal>
@@ -302,9 +302,9 @@ export function Home() {
                     <Award className="h-8 w-8" />
                   </div>
                   <div>
-                    <div className="text-xl font-extrabold text-navy-900">Dr. M.Umayal</div>
-                    <div className="text-base font-medium text-brand-600">Periodontist & Founder</div>
-                    <div className="text-sm text-slate-500">BDS, MDS (Periodontology)</div>
+                    <div className="text-xl font-extrabold text-navy-900">{CLINIC.doctor.name}</div>
+                    <div className="text-base font-medium text-brand-600">{CLINIC.doctor.designation}</div>
+                    <div className="text-sm text-slate-500">{CLINIC.doctor.credentials}</div>
                   </div>
                 </div>
               </Reveal>

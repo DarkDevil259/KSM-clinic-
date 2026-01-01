@@ -84,10 +84,10 @@ export function Navbar() {
               <img src={IMAGES.logo} alt="KSM Dental Clinic" className="h-full w-full object-contain drop-shadow-md" />
             </div>
             <div className="relative leading-tight">
-              <div className="text-base font-extrabold bg-gradient-to-r from-navy-900 to-navy-700 bg-clip-text text-transparent transition-all group-hover:from-brand-600 group-hover:to-dental-600">
+              <div className="text-xl font-branding font-bold text-brand-600 tracking-tight transition-all group-hover:text-brand-700">
                 {CLINIC.name}
               </div>
-              <div className="text-xs font-medium text-slate-500 tracking-wide uppercase">
+              <div className="text-xs font-semibold text-brand-600 tracking-widest uppercase font-branding">
                 Dental Clinic
               </div>
             </div>
