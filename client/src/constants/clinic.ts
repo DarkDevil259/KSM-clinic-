@@ -4,7 +4,7 @@ export const CLINIC = {
   phoneDisplay: "+91 88258 38557",
   phoneTel: "+918825838557",
   ownerEmail: "ksmdentalcare25@gmail.com",
-  addressLines: ["49 A-234, AA SAMY BUILDING", "INDRANI NAGAR, MUDAKU SALAI", "MADURAI 625016"],
+  addressLines: ["49 A-234, AA SAMY BUILDING", "INDRANI NAGAR, MUDAKKU SALAI", "MADURAI 625016"],
   whatsappDigits: "918825838557",
   hours: [
     { label: "Mon – Sat", value: "9:00 AM – 9:00 PM" },
