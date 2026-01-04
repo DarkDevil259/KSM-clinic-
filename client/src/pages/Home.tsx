@@ -226,40 +226,6 @@ export function Home() {
         </div>
       </section>
 
-      {/* How It Works - 3 Steps Section */}
-      <section className="bg-white py-12 md:py-24">
-        <div className="container-page">
-          <div className="text-center">
-            <Reveal width="100%" direction="up">
-              <div className="text-sm font-bold uppercase tracking-wider text-brand-600">
-                Register Online Before You Arrive
-              </div>
-              <h2 className="mt-3 text-2xl font-black tracking-tight text-navy-900 sm:text-3xl md:text-4xl lg:text-5xl">
-                We Look Forward to Welcoming You
-              </h2>
-              <p className="mx-auto mt-4 sm:mt-6 max-w-2xl text-slate-600 text-base sm:text-lg px-4">
-                Our complete current fees guide is on display in the reception area.
-              </p>
-            </Reveal>
-          </div>
-
-          <div className="mt-10 sm:mt-16 grid gap-6 md:grid-cols-3 md:gap-10 px-4 sm:px-0">
-            {steps.map((s, i) => (
-              <Reveal key={s.step} delay={i * 0.2} direction="up" width="100%">
-                <div className="group text-center p-6 rounded-3xl transition-all duration-300 hover:bg-brand-50/50">
-                  <div className="mx-auto grid h-20 w-20 place-items-center rounded-2xl bg-brand-100 text-brand-600 shadow-soft transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
-                    <s.icon className="h-9 w-9" />
-                  </div>
-                  <div className="mt-6 text-sm font-bold text-brand-500">{s.step}</div>
-                  <h3 className="mt-2 text-xl font-extrabold text-navy-900">{s.title}</h3>
-                  <p className="mt-3 text-slate-600 leading-relaxed">{s.desc}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Doctor About Section */}
       <section className="bg-slate-50 py-12 md:py-24 overflow-hidden">
         <div className="container-page">
@@ -291,7 +257,7 @@ export function Home() {
               <Reveal delay={0.4}>
                 <div className="mt-8 rounded-2xl border-l-4 border-brand-500 bg-white p-6 shadow-sm">
                   <p className="font-bold font-branding text-brand-600 text-lg">
-                    "Confident Smiles, Crafted by KSM"
+                    "Healthy teeth. Happy life."
                   </p>
                 </div>
               </Reveal>
@@ -309,6 +275,40 @@ export function Home() {
                 </div>
               </Reveal>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works - 3 Steps Section */}
+      <section className="bg-white py-12 md:py-24">
+        <div className="container-page">
+          <div className="text-center">
+            <Reveal width="100%" direction="up">
+              <div className="text-sm font-bold uppercase tracking-wider text-brand-600">
+                Register Online Before You Arrive
+              </div>
+              <h2 className="mt-3 text-2xl font-black tracking-tight text-navy-900 sm:text-3xl md:text-4xl lg:text-5xl">
+                We Look Forward to Welcoming You
+              </h2>
+              <p className="mx-auto mt-4 sm:mt-6 max-w-2xl text-slate-600 text-base sm:text-lg px-4">
+                Our complete current fees guide is on display in the reception area.
+              </p>
+            </Reveal>
+          </div>
+
+          <div className="mt-10 sm:mt-16 grid gap-6 md:grid-cols-3 md:gap-10 px-4 sm:px-0">
+            {steps.map((s, i) => (
+              <Reveal key={s.step} delay={i * 0.2} direction="up" width="100%">
+                <div className="group text-center p-6 rounded-3xl transition-all duration-300 hover:bg-brand-50/50">
+                  <div className="mx-auto grid h-20 w-20 place-items-center rounded-2xl bg-brand-100 text-brand-600 shadow-soft transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
+                    <s.icon className="h-9 w-9" />
+                  </div>
+                  <div className="mt-6 text-sm font-bold text-brand-500">{s.step}</div>
+                  <h3 className="mt-2 text-xl font-extrabold text-navy-900">{s.title}</h3>
+                  <p className="mt-3 text-slate-600 leading-relaxed">{s.desc}</p>
+                </div>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>

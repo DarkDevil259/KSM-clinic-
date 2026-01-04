@@ -1,6 +1,6 @@
 export const CLINIC = {
   name: "KSM Dental Care",
-  tagline: "Healthy teeth. Happy life.",
+  tagline: "Confident Smiles, Crafted by KSM",
   phoneDisplay: "+91 88258 38557",
   phoneTel: "+918825838557",
   ownerEmail: "ksmdentalcare25@gmail.com",
